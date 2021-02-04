@@ -18,6 +18,7 @@ class PieceTrainer(Train):
         )
 
     def train(self, train_file_pairs, valid_file_pairs):
+        batch_size = self.config.batch_size
         train_file_pairs = list(train_file_pairs)
         valid_file_pairs = list(valid_file_pairs)
 
@@ -27,22 +28,19 @@ class PieceTrainer(Train):
         train_SPE = sum(get_data_file_sample_length("t", x) for x in train_file_pairs)
         valid_SPE = sum(get_data_file_sample_length("v", x) for x in valid_file_pairs)
 
-        if train_SPE % 1000 == 0:
-            train_SPE /= 1000
+        train_valid_SPE = [train_SPE, valid_SPE]
+        for i, steps_per_epoch in enumerate(train_valid_SPE):
+            if steps_per_epoch % batch_size == 0:
+                steps_per_epoch /= batch_size
         else:
-            train_SPE = train_SPE / 1000 + 1
+            train_valid_SPE[i] = steps_per_epoch / batch_size + 1
 
-        if valid_SPE % 1000 == 0:
-            valid_SPE /= 1000
-        else:
-            valid_SPE = valid_SPE / 1000 + 1
-
-        history = self.model.model.fit_generator(
+        history = self.model.model.fit(
             train_gen,
             epochs=self.config.epochs,
-            steps_per_epoch=train_SPE,
+            steps_per_epoch=train_valid_SPE[0],
             validation_data=valid_gen,
-            validation_steps=valid_SPE,
+            validation_steps=train_valid_SPE[1],
         )
 
         print(history.history)
