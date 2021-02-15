@@ -59,8 +59,6 @@ def sort_files(fileobj):
 
 
 if __name__ == "__main__":
-    # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
     models = init_models(model_key)
     trainers = init_trainers(model_key)
 
@@ -86,9 +84,4 @@ if __name__ == "__main__":
 
         trainer.train(train_file_pairs, valid_file_pairs)
 
-        # TODO  WARNING: *.save requires manual check. (This warning is only applicable
-        # if the code saves a tf.Keras model) Keras model.save now saves to the
-        # Tensorflow SavedModel format by default, instead of HDF5. To continue saving
-
-        # to HDF5, add the argument save_format='h5' to the save() function.
         model.save()

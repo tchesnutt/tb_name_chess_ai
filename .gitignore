@@ -1,8 +1,9 @@
 /data
 /src/test.py
 /src/log.md
-/.vscode
 /env
+.vscode
+.flake8
+notes.md
 
 *.py[cod]
-.flake8
